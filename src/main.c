@@ -6,6 +6,6 @@
 #include <display.h>
 
 int main(int argc, char** argv) {
-	version();
+	cp_version();
     return 0;
 }

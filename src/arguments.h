@@ -15,6 +15,7 @@
 enum general_flags {
 
     HELP_FLAG = 0x01,
+    VERSION_FLAG = 0x02,
 
 };
 

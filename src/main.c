@@ -8,7 +8,6 @@
 #include <display.h>
 
 int main(int argc, char** argv) {
-    
     struct cp_cmd_args args;
     int error_iterator;
 
@@ -30,9 +29,12 @@ int main(int argc, char** argv) {
     }
 
     if (args.general_flags & HELP_FLAG) {
-        printf("%s\n", usage_msg);
+        cp_usage();
     }
 
+    if (args.general_flags & VERSION_FLAG) {
+        cp_version();
+	}
     return 0;
 
 }

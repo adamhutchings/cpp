@@ -45,6 +45,16 @@ void cp_parse_cmd_args(struct cp_cmd_args * args, int argc, char** argv) {
 
             args->general_flags |= HELP_FLAG;
 
+		} else if (!strcmp(argv[arg], "--version")) {
+            /* Check to make sure the version flag hasn't been seen before */
+            if (args->general_flags & VERSION_FLAG) {
+                if (cp_add_error(args, ERROR_REPEATED_FLAG, arg)) {
+                    return;
+                }
+            }
+
+            args->general_flags |= VERSION_FLAG;
+
         } else {
 
             /* No other flags exist now. */

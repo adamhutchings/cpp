@@ -29,11 +29,11 @@ int main(int argc, char** argv) {
     }
 
     if (args.general_flags & HELP_FLAG) {
-		cp_usage();
+        cp_usage();
 	}
 
     if (args.general_flags & VERSION_FLAG) {
-		cp_version();
+        cp_version();
 	}
     return 0;
 

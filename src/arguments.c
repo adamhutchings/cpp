@@ -18,6 +18,14 @@ int cp_add_error(struct cp_cmd_args * args, enum error_kind error, int argument)
 
 }
 
+int cp_check_extra_args(struct cp_cmd_args * args, int *arg, int flag) {
+    /* Check to make sure a flag hasn't been seen before */
+    if (args->general_flags & flag) {
+        return cp_add_error(args, ERROR_REPEATED_FLAG, *arg);
+    }
+	return 0;
+}
+
 void cp_parse_cmd_args(struct cp_cmd_args * args, int argc, char** argv) {
 
     int arg;
@@ -35,23 +43,12 @@ void cp_parse_cmd_args(struct cp_cmd_args * args, int argc, char** argv) {
     for (arg = 1; arg < argc; ++arg) {
     
         if (!strcmp(argv[arg], "--help")) {
-            
-            /* Check to make sure the help flag hasn't been seen before */
-            if (args->general_flags & HELP_FLAG) {
-                if (cp_add_error(args, ERROR_REPEATED_FLAG, arg)) {
-                    return;
-                }
-            }
+            if (cp_check_extra_args(&args, &arg, HELP_FLAG)) { return; }
 
             args->general_flags |= HELP_FLAG;
 
-		} else if (!strcmp(argv[arg], "--version")) {
-            /* Check to make sure the version flag hasn't been seen before */
-            if (args->general_flags & VERSION_FLAG) {
-                if (cp_add_error(args, ERROR_REPEATED_FLAG, arg)) {
-                    return;
-                }
-            }
+        } else if (!strcmp(argv[arg], "--version")) {
+            if (cp_check_extra_args(&args, &arg, VERSION_FLAG)) { return; }
 
             args->general_flags |= VERSION_FLAG;
 

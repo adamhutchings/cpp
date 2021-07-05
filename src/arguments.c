@@ -21,12 +21,9 @@ int cp_add_error(struct cp_cmd_args * args, enum error_kind error, int argument)
 int cp_check_extra_args(struct cp_cmd_args * args, int *arg, int flag) {
     /* Check to make sure a flag hasn't been seen before */
     if (args->general_flags & flag) {
-        if (cp_add_error(args, ERROR_REPEATED_FLAG, *arg)) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return cp_add_error(args, ERROR_REPEATED_FLAG, *arg);
     }
+	return 0;
 }
 
 void cp_parse_cmd_args(struct cp_cmd_args * args, int argc, char** argv) {

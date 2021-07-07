@@ -21,21 +21,56 @@ int cp_lexer_init(struct cp_lexer * lexer, const char * filename) {
 /* INTERNAL USE FUNCTIONS */
 
 /* SKIP IRRELEVANT THINGS */
-int cp_lexer_skip_whitespace(struct cp_lexer *);
-int cp_lexer_skip_comment   (struct cp_lexer *);
-int cp_lexer_skip_all       (struct cp_lexer *);
+int                  cp_lexer_skip_whitespace(struct cp_lexer *);
+int                  cp_lexer_skip_comment   (struct cp_lexer *);
+int                  cp_lexer_skip_all       (struct cp_lexer *);
+enum token_type      cp_lexer_get_ttype      (int);
 
 /* End function decls */
 
 int cp_lexer_read(struct cp_lexer * lexer, struct cp_token * token) {
 
-    char firstchar;
+    int firstchar;
+    int buf_index = 0; /* where in the charaacter buffer we put tokens */
 
     memset(token, 0, sizeof *token);
 
     cp_lexer_skip_all(lexer); /* All whitespace is now skipped. */
 
     firstchar = getc(lexer->file);
+
+    token->type = cp_lexer_get_ttype(firstchar);
+
+    do {
+        token->content[buf_index++] = firstchar;
+        firstchar = getc(lexer->file);
+    } while (isnum(firstchar) || cp_lexer_get_type(firstchar) == T_IDENTIFIER);
+
+    /* We've read one character too far. */
+    ungetc(firstchar, lexer->file);
+
+}
+
+enum token_type cp_lexer_get_ttype(int begin) {
+
+    /* Single character matches */
+    if (begin == '(') {
+        return T_OPAREN;
+    }
+    if (begin == ')') {
+        return T_CPAREN;
+    }
+    if (begin == '#') {
+        return T_SHARP;
+    }
+    if (begin == -1) {
+        return T_EOF;
+    }
+    if (isalpha(begin)) {
+        return T_IDENTIFIER;
+    }
+
+    return T_ELSE;
 
 }
 

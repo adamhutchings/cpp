@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
 
     cp_lexer_init(&lexer, argv[1]);
     while ( cp_lexer_read(&lexer, &token) == 0 ) {
-        printf("%d:%s\t\t %s\n", token.type, cp_get_token_name(token.type), token.content);
+        printf("%d:%-16s %s\n", token.type, cp_get_token_name(token.type), token.content);
     }
 
     return 0;

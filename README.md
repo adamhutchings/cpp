@@ -9,7 +9,11 @@ int main() {                int main() {
 ```
 
 ## build
-`./scripts/build.sh`
+```
+./scripts/build.sh
+```
 
 ## run
-`./build/cproc`
+```
+./build/cproc
+```

@@ -33,6 +33,8 @@ int cp_lexer_read(struct cp_lexer * lexer, struct cp_token * token) {
     int firstchar;
     int buf_index = 0; /* where in the charaacter buffer we put tokens */
 
+    if (feof(lexer->file)) return 1;
+
     memset(token, 0, sizeof *token);
 
     cp_lexer_skip_all(lexer); /* All whitespace is now skipped. */

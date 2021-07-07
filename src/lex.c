@@ -1,6 +1,7 @@
 #include "lex.h"
 
 #include <ctype.h>
+#include <string.h>
 
 int cp_lexer_init(struct cp_lexer * lexer, const char * filename) {
 
@@ -21,10 +22,10 @@ int cp_lexer_init(struct cp_lexer * lexer, const char * filename) {
 /* INTERNAL USE FUNCTIONS */
 
 /* SKIP IRRELEVANT THINGS */
-int                  cp_lexer_skip_whitespace(struct cp_lexer *);
-int                  cp_lexer_skip_comment   (struct cp_lexer *);
-int                  cp_lexer_skip_all       (struct cp_lexer *);
-enum token_type      cp_lexer_get_ttype      (int);
+static int                  cp_lexer_skip_whitespace(struct cp_lexer *);
+static int                  cp_lexer_skip_comment   (struct cp_lexer *);
+static int                  cp_lexer_skip_all       (struct cp_lexer *);
+static enum token_type      cp_lexer_get_ttype      (int);
 
 /* End function decls */
 
@@ -46,14 +47,16 @@ int cp_lexer_read(struct cp_lexer * lexer, struct cp_token * token) {
     do {
         token->content[buf_index++] = firstchar;
         firstchar = getc(lexer->file);
-    } while (isnum(firstchar) || cp_lexer_get_type(firstchar) == T_IDENTIFIER);
+    } while (isnumber(firstchar) || cp_lexer_get_ttype(firstchar) == T_IDENTIFIER);
 
     /* We've read one character too far. */
     ungetc(firstchar, lexer->file);
 
+    return 0;
+
 }
 
-enum token_type cp_lexer_get_ttype(int begin) {
+static enum token_type cp_lexer_get_ttype(int begin) {
 
     /* Single character matches */
     if (begin == '(') {

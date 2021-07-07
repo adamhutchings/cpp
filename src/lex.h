@@ -26,6 +26,10 @@ enum token_type {
 
 };
 
+static char* token_type_names[6] = {"identifier", "oparen", "cparen", "sharp", "other", "end"};
+
+char* cp_get_token_name(int type);
+
 struct cp_token {
 
     enum token_type type;

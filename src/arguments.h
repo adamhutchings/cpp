@@ -42,8 +42,7 @@ struct cp_cmd_args {
     /* How many errors */
     unsigned error_count;
 
-    /* More to come later */
-
+	char * filename;
 };
 
 /**

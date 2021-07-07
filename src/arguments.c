@@ -52,6 +52,10 @@ void cp_parse_cmd_args(struct cp_cmd_args * args, int argc, char** argv) {
 
             args->general_flags |= VERSION_FLAG;
 
+		} else if (argc == 2) {
+
+			args->filename = argv[1];
+
         } else {
 
             /* No other flags exist now. */

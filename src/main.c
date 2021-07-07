@@ -4,11 +4,15 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <arguments.h>
 #include <display.h>
+#include <lex.h>
 
 int main(int argc, char** argv) {
     struct cp_cmd_args args;
+    struct cp_lexer lexer;
+    struct cp_token token;
     int error_iterator;
 
     cp_parse_cmd_args(&args, argc, argv);
@@ -30,11 +34,19 @@ int main(int argc, char** argv) {
 
     if (args.general_flags & HELP_FLAG) {
         cp_usage();
+        exit(0);
     }
 
     if (args.general_flags & VERSION_FLAG) {
         cp_version();
-	}
+        exit(0);
+    }
+
+    cp_lexer_init(&lexer, argv[1]);
+    while ( cp_lexer_read(&lexer, &token) == 0 ) {
+        printf("%d:%-16s %s\n", token.type, cp_get_token_name(token.type), token.content);
+    }
+
     return 0;
 
 }

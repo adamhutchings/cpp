@@ -23,7 +23,7 @@ int cp_check_extra_args(struct cp_cmd_args * args, int *arg, int flag) {
     if (args->general_flags & flag) {
         return cp_add_error(args, ERROR_REPEATED_FLAG, *arg);
     }
-	return 0;
+    return 0;
 }
 
 void cp_parse_cmd_args(struct cp_cmd_args * args, int argc, char** argv) {
@@ -52,14 +52,7 @@ void cp_parse_cmd_args(struct cp_cmd_args * args, int argc, char** argv) {
 
             args->general_flags |= VERSION_FLAG;
 
-        } else {
-
-            /* No other flags exist now. */
-            if (cp_add_error(args, ERROR_UNRECOGNIZED_FLAG, arg)) {
-                return;
-            }
-
-        }
+        } else { args->filename = argv[arg]; }
 
     }
 

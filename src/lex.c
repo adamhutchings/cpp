@@ -26,11 +26,33 @@ static int                  cp_lexer_skip_whitespace(struct cp_lexer *);
 static int                  cp_lexer_skip_comment   (struct cp_lexer *);
 static int                  cp_lexer_skip_all       (struct cp_lexer *);
 static enum token_type      cp_lexer_get_ttype      (int);
+static int                  cp_lexer_getc           (struct cp_lexer *);
 
 /* End function decls */
 
 char* cp_get_token_name(int type) {
 	return token_type_names[type];
+}
+
+/**
+ * This is necessary as an internal wrapper because we have to account for
+ * line splices (lines being continued with backslashes), trigraphs, etc.
+ * This function only performs line splices on input.
+ */
+static int cp_lexer_getc(struct cp_lexer * lexer) {
+    int c = getc(lexer->file);
+    if (c == '\\') {
+        int n = getc(lexer->file);
+        if (n == '\n') {
+            return getc(lexer->file);
+        } else {
+            ungetc(n, lexer->file);
+        }
+    }
+    if (c == '\n') {
+        ++lexer->current_lineno;
+    }
+    return c;
 }
 
 int cp_lexer_read(struct cp_lexer * lexer, struct cp_token * token) {
@@ -44,13 +66,14 @@ int cp_lexer_read(struct cp_lexer * lexer, struct cp_token * token) {
 
     cp_lexer_skip_all(lexer); /* All whitespace is now skipped. */
 
-    firstchar = getc(lexer->file);
+    firstchar = cp_lexer_getc(lexer);
 
     token->type = cp_lexer_get_ttype(firstchar);
+    token->lineno = lexer->current_lineno;
 
     do {
         token->content[buf_index++] = firstchar;
-        firstchar = getc(lexer->file);
+        firstchar = cp_lexer_getc(lexer);
     } while (isdigit(firstchar) || cp_lexer_get_ttype(firstchar) == T_IDENTIFIER);
 
     /* We've read one character too far. */
@@ -93,7 +116,7 @@ static int cp_lexer_skip_whitespace(struct cp_lexer * lexer) {
 
     for ( ; ; ++skipped) {
 
-        c = getc(lexer->file);
+        c = cp_lexer_getc(lexer);
         if (!isspace(c)) {
             /* We've reached the end - put back and return. */
             ungetc(c, lexer->file);
@@ -121,13 +144,13 @@ static int cp_lexer_skip_comment(struct cp_lexer * lexer) {
     int counted = 0; /* how many characters. */
 
     /* Initial must be a forward slash in all cases. */
-    initial = getc(lexer->file);
+    initial = cp_lexer_getc(lexer);
     if (initial != '/') {
         ungetc(initial, lexer->file);
         return 0;
     }
 
-    second = getc(lexer->file);
+    second = cp_lexer_getc(lexer);
     switch (second) {
         case '/':
             mode = CP_LINE_COMMENT;
@@ -148,7 +171,7 @@ static int cp_lexer_skip_comment(struct cp_lexer * lexer) {
     if (mode == CP_LINE_COMMENT) {
 
         /* Go forward until we reach a newline. */
-        while (getc(lexer->file) != '\n')
+        while (cp_lexer_getc(lexer) != '\n')
             if (feof(lexer->file)) return -1;
 
     } else {
@@ -164,7 +187,7 @@ static int cp_lexer_skip_comment(struct cp_lexer * lexer) {
         for (;; ++counted) {
 
             last = cur;
-            cur = getc(lexer->file);
+            cur = cp_lexer_getc(lexer);
 
             if (cur == '/' && last == '*') break;
 

@@ -47,10 +47,12 @@ static int cp_lexer_getc(struct cp_lexer * lexer) {
             return getc(lexer->file);
         } else {
             ungetc(n, lexer->file);
-            ungetc(c, lexer->file);
         }
     }
-    return getc(lexer->file);
+    if (c == '\n') {
+        ++lexer->current_lineno;
+    }
+    return c;
 }
 
 int cp_lexer_read(struct cp_lexer * lexer, struct cp_token * token) {

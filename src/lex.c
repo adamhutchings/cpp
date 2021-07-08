@@ -69,6 +69,7 @@ int cp_lexer_read(struct cp_lexer * lexer, struct cp_token * token) {
     firstchar = cp_lexer_getc(lexer);
 
     token->type = cp_lexer_get_ttype(firstchar);
+    token->lineno = lexer->current_lineno;
 
     do {
         token->content[buf_index++] = firstchar;

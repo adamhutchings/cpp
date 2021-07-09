@@ -32,6 +32,7 @@ char* cp_get_token_name(int type);
 
 struct cp_token {
 
+    unsigned beg_of_line : 1;
     enum token_type type;
     char content[TOKEN_MAX_LENGTH];
     unsigned lineno;

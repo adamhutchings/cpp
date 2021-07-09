@@ -12,6 +12,7 @@ struct cp_lexer {
 
     FILE* file; /* the file this is reading from */
     int current_lineno;
+    unsigned last_processed_newline;
 
 };
 
@@ -32,6 +33,7 @@ char* cp_get_token_name(int type);
 
 struct cp_token {
 
+    unsigned beg_of_line : 1;
     enum token_type type;
     char content[TOKEN_MAX_LENGTH];
     unsigned lineno;

@@ -51,6 +51,9 @@ static int cp_lexer_getc(struct cp_lexer * lexer) {
     }
     if (c == '\n') {
         ++lexer->current_lineno;
+        lexer->last_processed_newline = 1;
+    } else {
+        lexer->last_processed_newline = 0;
     }
     return c;
 }
@@ -66,6 +69,7 @@ int cp_lexer_read(struct cp_lexer * lexer, struct cp_token * token) {
 
     cp_lexer_skip_all(lexer); /* All whitespace is now skipped. */
 
+    token->last_processed_newline = lexer->last_processed_newline;
     firstchar = cp_lexer_getc(lexer);
 
     token->type = cp_lexer_get_ttype(firstchar);

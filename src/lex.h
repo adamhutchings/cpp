@@ -12,6 +12,7 @@ struct cp_lexer {
 
     FILE* file; /* the file this is reading from */
     int current_lineno;
+    unsigned last_processed_newline;
 
 };
 
